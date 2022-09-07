@@ -505,6 +505,15 @@ DPicker.prototype.renderDays = function (events, data, toRender) {
 
       let dayMonth = previousMonth ? currentMonth : (nextMonth ? currentMonth + 2 : currentMonth + 1)
       let currentDayModel = new Date(currentYear, dayMonth - 1, day)
+      let dayValid = false;
+      let delta=currentDayModel.getTime()-data.max.getTime();
+
+      if (delta < 0) {
+            delta = data.min.getTime()-currentDayModel.getTime();
+            if (delta < 0) {
+                dayValid = true;
+            }
+      }
 
       if (dayActive === false && data.siblingMonthDayClick === true) {
         dayActive = true
@@ -525,7 +534,7 @@ DPicker.prototype.renderDays = function (events, data, toRender) {
       const button = html`<button value="${day}" aria-label="Day ${day}" aria-disabled="${dayActive}" onclick="${previousMonth === false && nextMonth === false ? events.dayClick : (previousMonth === true ? events.previousMonthDayClick : events.nextMonthDayClick)}" type="button" onkeydown="${events.dayKeyDown}" class="${classActive}">${day}</button>`
 
       return html`<td class="${dayActive === true ? 'dpicker-active' : 'dpicker-inactive'}">
-        ${dayActive === true ? button : html`<span class="${classActive}">${day}</span>`}
+        ${dayActive === true ? button : html`<span class="${classActive} ${dayValid ? '' : 'dpicker-inactive--notallowed'}">${day}</span>`}
       </td>`
     })}</tr>`
   })}
